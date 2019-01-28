@@ -1,12 +1,16 @@
 package com.dataOne.reviewService.entity;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -29,8 +33,13 @@ public class Movie {
 	@Column
 	private String genre;
 	
-	@Column
-	private Integer directorId;
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "movie_actor", joinColumns = { @JoinColumn(name = "movie_id") }, inverseJoinColumns = { @JoinColumn(name = "actor_id") })
+	private Set<Actor> actors;
+	
+	@ManyToOne(optional = false)
+    @JoinColumn(name="director_id")
+	private Director director;
 	
 	
 	
@@ -50,8 +59,12 @@ public class Movie {
 		return genre;
 	}
 	
-	public Integer getDirectorId() {
-		return this.directorId;
+	public Set<Actor> getActors() {
+		return actors;
+	}
+	
+	public Director getDirector() {
+		return director;
 	}
 	
 	public void setName(String name) {
@@ -69,8 +82,12 @@ public class Movie {
 	public void setGenre(String genre) {
 		this.genre = genre;
 	}
+
+	public void setActors(Set<Actor> actors) {
+		this.actors = actors;
+	}
 	
-	public void setDirectorId(Integer directorId) {
-		this.directorId = directorId;
+	public void setDirector(Director director) {
+		this.director = director;
 	}
 }

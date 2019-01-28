@@ -1,5 +1,6 @@
 package com.dataOne.reviewService.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dataOne.reviewService.entity.Review;
 import com.dataOne.reviewService.model.ModifyReview;
 import com.dataOne.reviewService.service.ReviewService;
+import com.dataOne.reviewService.vo.BasicReview;
+import com.dataOne.reviewService.vo.ResultReview;
 
 @RestController
 public class ReviewController {
@@ -21,17 +24,44 @@ public class ReviewController {
 	
 	
 	@RequestMapping("/review")
-	public List<Review> display(@RequestParam("name") String name){
+	public ResultReview display(@RequestParam("name") String name){
 		
 		List<Review> r = reviewService.getReviews(name);
-		return r;
+		ResultReview reviews = new ResultReview();
+		if(r.size() > 0)
+		{
+			List<BasicReview> revs = new ArrayList<BasicReview>(); 
+			reviews.setMovie(r.get(0).getMovie());
+			for(Review review : r)
+			{
+				BasicReview br = new BasicReview();
+				br.setRating(review.getRating());
+				br.setComment(review.getComment());
+				revs.add(br);
+			}
+			reviews.setReviews(revs);
+		}
+		return reviews;
 	}
 	
 	@RequestMapping(value = "/review",
 			method = RequestMethod.POST)
-	public List<Review> add(@RequestBody ModifyReview modifyReview){
+	public ResultReview add(@RequestBody ModifyReview modifyReview){
 		List<Review> r = reviewService.AddReviews(modifyReview.getMovieName(), modifyReview.getRating(), modifyReview.getComment());
-		return r;
+		ResultReview reviews = new ResultReview();
+		if(r.size() > 0)
+		{
+			List<BasicReview> revs = new ArrayList<BasicReview>(); 
+			reviews.setMovie(r.get(0).getMovie());
+			for(Review review : r)
+			{
+				BasicReview br = new BasicReview();
+				br.setRating(review.getRating());
+				br.setComment(review.getComment());
+				revs.add(br);
+			}
+			reviews.setReviews(revs);
+		}
+		return reviews;
 	}
-
 }
